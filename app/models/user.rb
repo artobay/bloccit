@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-
+#object before saving , refers to email object 
  before_save { self.email = email.downcase if email.present? }
 
  # #3 Name Validation 
