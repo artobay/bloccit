@@ -4,6 +4,14 @@ class UsersController < ApplicationController
      @user = User.new
     end
     
+    def confirm
+ # # Note: We dont save this action on database 
+     @user = User.new
+     @user.name = params[:user][:name]
+     @user.email = params[:user][:email]
+     @user.password = params[:user][:password]
+     @user.password_confirmation = params[:user][:password_confirmation]
+    end 
     
 def create
  # # Note: 
@@ -23,5 +31,11 @@ def create
      end
 end
 
+def user_params
+   params.require(:user).permit(:email, :password, :password_confirmation)
+end
+
+ # This makes `user_params()` available in the view.
+ helper_method :user_params
 
 end
