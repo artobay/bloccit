@@ -7,6 +7,7 @@ RSpec.describe PostsController, type: :controller do
   let(:other_user) { User.create!(name: RandomData.random_name, email: RandomData.random_email, password: "helloworld", role: :member) }
   let (:my_topic) { Topic.create!(name:  RandomData.random_sentence, description: RandomData.random_paragraph) }
   let(:my_post) { my_topic.posts.create!(title: RandomData.random_sentence, body: RandomData.random_paragraph, user: my_user) }
+  let(:mod_user) { User.create!(name: 'Mod Life', email: 'mod@example.com', password: "helloworld", role: :moderator) }
 
   context "guest" do
     describe "GET show" do
@@ -370,4 +371,68 @@ RSpec.describe PostsController, type: :controller do
       end
     end
   end
+
+context "moderators" do
+    before do
+      other_user.moderator!
+      create_session(mod_user)
+    end
+
+    describe "GET show" do
+      it "returns http success" do
+        get :show, params: { topic_id: my_topic.id, id: my_post.id }
+        expect(response).to have_http_status(:success)
+      end
+
+      it "renders the #show view" do
+        get :show, params: { topic_id: my_topic.id, id: my_post.id }
+        expect(response).to render_template :show
+      end
+
+      it "assigns my_post to @post" do
+        get :show, params: { topic_id: my_topic.id, id: my_post.id }
+        expect(assigns(:post)).to eq(my_post)
+      end
+    end
+
+    describe "GET new" do
+      it "returns http success" do
+        get :new, params: { topic_id: my_topic.id }
+        expect(response).to have_http_status(:success)
+      end
+
+      it "renders the #new view" do
+        get :new, params: { topic_id: my_topic.id }
+        expect(response).to render_template :new
+      end
+
+      it "instantiates @post" do
+        get :new, params: { topic_id: my_topic.id }
+        expect(assigns(:post)).not_to be_nil
+      end
+    end
+
+    describe "PUT update" do
+      it "updates post with expected attributes" do
+        new_title = RandomData.random_sentence
+        new_body = RandomData.random_paragraph
+
+        put :update, params: { topic_id: my_topic.id, id: my_post.id, post: { title: new_title, body: new_body } }
+
+        updated_post = assigns(:post)
+        expect(updated_post.id).to eq my_post.id
+        expect(updated_post.title).to eq new_title
+        expect(updated_post.body).to eq new_body
+      end
+
+      it "redirects to the updated post" do
+        new_title = RandomData.random_sentence
+        new_body = RandomData.random_paragraph
+
+        put :update, params: { topic_id: my_topic.id, id: my_post.id, post: { title: new_title, body: new_body } }
+        expect(response).to redirect_to [my_topic, my_post]
+      end
+    end
+  end
+
 end
