@@ -123,7 +123,7 @@ RSpec.describe PostsController, type: :controller do
     describe "GET edit" do
       it "returns http redirect" do
         get :edit, params: { topic_id: my_topic.id, id: my_post.id }
-        expect(response).to redirect_to([my_topic, my_post])
+        expect(response).to redirect_to(topics_path)
       end
     end
 
@@ -133,14 +133,14 @@ RSpec.describe PostsController, type: :controller do
         new_body = RandomData.random_paragraph
 
         put :update, params: { topic_id: my_topic.id, id: my_post.id, post: { title: new_title, body: new_body } }
-        expect(response).to redirect_to([my_topic, my_post])
+        expect(response).to redirect_to(topics_path)
       end
     end
 
     describe "DELETE destroy" do
       it "returns http redirect" do
         delete :destroy, params: { topic_id: my_topic.id, id: my_post.id }
-        expect(response).to redirect_to([my_topic, my_post])
+        expect(response).to redirect_to(topics_path)
       end
     end
   end
