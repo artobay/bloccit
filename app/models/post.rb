@@ -2,9 +2,10 @@ class Post < ApplicationRecord
      belongs_to :topic 
      belongs_to :user
      has_many :comments, dependent: :destroy
+     has_many :votes, dependent: :destroy 
        default_scope { order('rank DESC') }
-#note: models can filter our database, we are going to filter our db by lenght and presence
-     has_many :votes, dependent: :destroy
+
+     
    
    validates :title, length: { minimum: 5 }, presence: true
    validates :body, length: { minimum: 20 }, presence: true
