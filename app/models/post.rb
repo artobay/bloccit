@@ -4,6 +4,7 @@ class Post < ApplicationRecord
      has_many :comments, dependent: :destroy
      has_many :votes, dependent: :destroy 
      has_many :favorites, dependent: :destroy
+     after_create :create_favorite  
        default_scope { order('rank DESC') }
 
      
@@ -33,4 +34,10 @@ class Post < ApplicationRecord
      new_rank = points + age_in_days
      update_attribute(:rank, new_rank)
    end
+   
+   def create_favorite
+        
+        Favorite.create(post: self, user: self.user)
+        Favorite.new_post(self).deliver_now
+   end   
 end
