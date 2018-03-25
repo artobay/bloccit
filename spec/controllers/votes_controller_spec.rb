@@ -1,6 +1,7 @@
 require 'rails_helper'
 include SessionsHelper
  
+ 
  RSpec.describe VotesController, type: :controller do
    let(:my_topic) { create(:topic) }
    let(:my_user) { create(:user) }
@@ -45,6 +46,7 @@ include SessionsHelper
          post :down_vote, params: { post_id: user_post.id }
          expect(user_post.votes.count).to eq(votes)
        end
+ 
  
        it "decreases the sum of post votes by one" do
          points = user_post.points
